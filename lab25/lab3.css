@@ -1,0 +1,19 @@
+.color-name {
+    color: red;
+}
+
+.hex-bg {
+    background-color: #ff5733; 
+    color: white;
+    padding: 10px;
+}
+
+.rgb-text {
+    color: rgb(0, 0, 255); 
+}
+
+.rgba-bg {
+    background-color: rgba(0, 255, 0, 0.3);
+    padding: 10px;
+    border: 1px solid black;
+}
