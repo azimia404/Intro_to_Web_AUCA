@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Button Color Transition</title>
+    <title>Glowing Button</title>
     <style>
     .btn {
     background-color: blue;
@@ -11,14 +11,19 @@
     padding: 10px 20px;
     border: none;
     cursor: pointer;
-    transition: background-color 0.5s ease-in-out;
+    animation: pulse 1.5s infinite alternate;
     }
-    .btn:hover {
-    background-color: red;
+    @keyframes pulse {
+    from {
+    box-shadow: 0 0 5px blue;
+    }
+    to {
+    box-shadow: 0 0 20px blue;
+    }
     }
     </style>
 </head>
 <body>
-    <button class="btn">Hover Me</button>
+    <button class="btn">Glowing Button</button>
 </body>
 </html>
