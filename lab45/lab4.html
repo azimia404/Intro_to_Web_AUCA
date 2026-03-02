@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 4: Search Users</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .search-container {
+            margin: 20px 0;
+        }
+        #searchInput {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        #searchInput:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            background: white;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .name {
+            font-weight: bold;
+            color: #007bff;
+            font-size: 18px;
+        }
+        .email {
+            color: #666;
+            margin-top: 5px;
+        }
+        .no-results {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Search Users</h1>
+    <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Search by name...">
+    </div>
+    <ul id="userList"></ul>
+
+    <script>
+        let allUsers = [];
+
+        fetch('https://jsonplaceholder.typicode.com/users')
+            .then(response => response.json())
+            .then(users => {
+                allUsers = users;
+                displayUsers(users);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('userList').innerHTML = '<li>Error loading users</li>';
+            });
+
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            let searchTerm = e.target.value.toLowerCase();
+            let filteredUsers = allUsers.filter(user => 
+                user.name.toLowerCase().includes(searchTerm)
+            );
+            displayUsers(filteredUsers);
+        });
+
+        function displayUsers(users) {
+            let userList = document.getElementById('userList');
+            userList.innerHTML = '';
+            
+            if (users.length === 0) {
+                userList.innerHTML = '<li class="no-results">No users found</li>';
+                return;
+            }
+            
+            users.forEach(user => {
+                let li = document.createElement('li');
+                li.innerHTML = `
+                    <div class="name">${user.name}</div>
+                    <div class="email">${user.email}</div>
+                `;
+                userList.appendChild(li);
+            });
+        }
+    </script>
+</body>
+</html>
