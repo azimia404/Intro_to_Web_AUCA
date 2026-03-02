@@ -39,7 +39,6 @@
         let blinkInterval;
 
         startButton.onclick = function() {
-            // Очищаем предыдущий интервал, если он был
             if (blinkInterval) {
                 clearInterval(blinkInterval);
             }
@@ -50,12 +49,12 @@
                 } else {
                     text.style.color = "red";
                 }
-            }, 500); // Уменьшил до 500мс для более заметного мигания
+            }, 500);
         };
 
         stopButton.onclick = function() {
             clearInterval(blinkInterval);
-            text.style.color = "black"; // Возвращаем исходный цвет
+            text.style.color = "black";
         };
     </script>
 </body>
