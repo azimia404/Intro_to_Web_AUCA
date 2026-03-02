@@ -2,24 +2,19 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Lab 1: Change Style</title>
+    <title>Lab 1: Get Input Value</title>
 </head>
 <body>
-    <p id="text">Click the button to change my style!</p>
-    <button id="changeStyle">Change Style</button>
+    <label for="username">Enter Username:</label>
+    <input type="text" id="username" placeholder="Type here">
+    <button onclick="displayValue()">Submit</button>
+    <p id="output"></p>
 
     <script>
-        let button = document.getElementById("changeStyle");
-        let text = document.getElementById("text");
-
-        button.onclick = function() {
-            text.style.color = "white";
-            text.style.backgroundColor = "black";
-            text.style.fontSize = "24px";
-            text.style.padding = "10px";
-            text.style.borderRadius = "5px";
-            text.style.transition = "all 0.3s ease";
-        };
+        function displayValue() {
+            let username = document.getElementById("username").value;
+            document.getElementById("output").innerText = "Entered Username: " + username;
+        }
     </script>
 </body>
 </html>

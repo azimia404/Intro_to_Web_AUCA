@@ -2,60 +2,50 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Lab 5: Blinking Text</title>
-    <style>
-        #blinkText {
-            font-size: 24px;
-            font-weight: bold;
-            padding: 20px;
-            text-align: center;
-            transition: color 0.3s ease;
-        }
-        
-        .controls {
-            margin: 20px;
-            text-align: center;
-        }
-        
-        button {
-            padding: 10px 20px;
-            margin: 0 10px;
-            font-size: 14px;
-            cursor: pointer;
-        }
-    </style>
+    <title>Lab 5: Complete Form Validation</title>
 </head>
 <body>
-    <p id="blinkText">This text will blink.</p>
-    <div class="controls">
-        <button id="startBlink">Start Blinking</button>
-        <button id="stopBlink">Stop Blinking</button>
-    </div>
+    <form id="userForm">
+        <label for="name">Name:</label>
+        <input type="text" id="name" placeholder="Enter name">
+        <br><br>
+        <label for="email">Email:</label>
+        <input type="email" id="email" placeholder="Enter email">
+        <br><br>
+        <label for="age">Age:</label>
+        <input type="text" id="age" placeholder="Enter age">
+        <br><br>
+        <button type="submit">Submit</button>
+    </form>
+    <p id="result"></p>
 
     <script>
-        let text = document.getElementById("blinkText");
-        let startButton = document.getElementById("startBlink");
-        let stopButton = document.getElementById("stopBlink");
-        let blinkInterval;
+        document.getElementById('userForm').addEventListener('submit', function(event) {
+            event.preventDefault();
 
-        startButton.onclick = function() {
-            if (blinkInterval) {
-                clearInterval(blinkInterval);
+            let name = document.getElementById("name").value;
+            let email = document.getElementById("email").value;
+            let age = document.getElementById("age").value;
+
+            let emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+            if (name.trim() === "" || email.trim() === "" || age.trim() === "") {
+                alert("All fields are required!");
+                return;
             }
-            
-            blinkInterval = setInterval(() => {
-                if (text.style.color === "red" || text.style.color === "") {
-                    text.style.color = "blue";
-                } else {
-                    text.style.color = "red";
-                }
-            }, 500);
-        };
 
-        stopButton.onclick = function() {
-            clearInterval(blinkInterval);
-            text.style.color = "black";
-        };
+            if (!emailPattern.test(email)) {
+                alert("Invalid email format!");
+                return;
+            }
+
+            if (isNaN(age) || age.trim() === "") {
+                alert("Age must be a number!");
+                return;
+            }
+
+            document.getElementById("result").innerText = "Form submitted successfully!";
+        });
     </script>
 </body>
 </html>

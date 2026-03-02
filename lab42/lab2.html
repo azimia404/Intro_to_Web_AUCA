@@ -2,35 +2,30 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Lab 2: Toggle Class</title>
-    <style>
-        .highlight {
-            color: white;
-            background-color: blue;
-            font-weight: bold;
-            padding: 10px;
-            border-radius: 5px;
-            border: 2px solid darkblue;
-            transition: all 0.3s ease;
-        }
-        
-        p {
-            padding: 5px;
-            transition: all 0.3s ease;
-        }
-    </style>
+    <title>Lab 2: Empty Field Validation</title>
 </head>
 <body>
-    <p id="text">Click the button to highlight me!</p>
-    <button id="toggleClass">Toggle Highlight</button>
+    <form onsubmit="return validateForm()">
+        <label for="name">Name:</label>
+        <input type="text" id="name" placeholder="Enter name">
+        <br><br>
+        <label for="email">Email:</label>
+        <input type="email" id="email" placeholder="Enter email">
+        <br><br>
+        <button type="submit">Submit</button>
+    </form>
 
     <script>
-        let button = document.getElementById("toggleClass");
-        let text = document.getElementById("text");
+        function validateForm() {
+            let name = document.getElementById("name").value;
+            let email = document.getElementById("email").value;
 
-        button.onclick = function() {
-            text.classList.toggle("highlight");
-        };
+            if (name.trim() === "" || email.trim() === "") {
+                alert("All fields must be filled!");
+                return false;
+            }
+            return true;
+        }
     </script>
 </body>
 </html>

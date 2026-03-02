@@ -2,64 +2,28 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Lab 4: Moving Box</title>
-    <style>
-        #box {
-            width: 50px;
-            height: 50px;
-            background-color: red;
-            position: absolute;
-            top: 100px;
-            left: 0;
-            border-radius: 5px;
-            transition: left 0.05s linear;
-        }
-        
-        #moveButton {
-            margin-top: 160px;
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        
-        #resetButton {
-            margin-left: 10px;
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-    </style>
+    <title>Lab 4: Number Validation</title>
 </head>
 <body>
-    <div id="box"></div>
-    <button id="moveButton">Move Right</button>
-    <button id="resetButton">Reset Position</button>
+    <form onsubmit="return validateNumber()">
+        <label for="age">Enter Age:</label>
+        <input type="text" id="age" placeholder="Enter age">
+        <br><br>
+        <button type="submit">Submit</button>
+    </form>
 
     <script>
-        let box = document.getElementById("box");
-        let moveButton = document.getElementById("moveButton");
-        let resetButton = document.getElementById("resetButton");
-        let position = 0;
-        let moveInterval;
+        function validateNumber() {
+            let age = document.getElementById("age").value;
 
-        moveButton.onclick = function() {
-            clearInterval(moveInterval);
+            if (isNaN(age) || age.trim() === "") {
+                alert("Please enter a valid number!");
+                return false;
+            }
             
-            moveInterval = setInterval(() => {
-                if (position < 300) {
-                    position += 5;
-                    box.style.left = position + "px";
-                } else {
-                    clearInterval(moveInterval);
-                }
-            }, 50);
-        };
-
-        resetButton.onclick = function() {
-            clearInterval(moveInterval);
-            position = 0;
-            box.style.left = position + "px";
-        };
+            alert("Age is valid: " + age);
+            return true;
+        }
     </script>
 </body>
 </html>
