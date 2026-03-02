@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lab 3: Fade Out Effect</title>
+    <style>
+        #fadeText {
+            font-size: 18px;
+            padding: 10px;
+            background-color: lightblue;
+            border-radius: 5px;
+            transition: opacity 0.1s linear;
+        }
+    </style>
+</head>
+<body>
+    <p id="fadeText">This text will fade out.</p>
+    <button id="fadeButton">Fade Out</button>
+    <button id="resetButton">Reset</button>
+
+    <script>
+        let fadeButton = document.getElementById("fadeButton");
+        let resetButton = document.getElementById("resetButton");
+        let text = document.getElementById("fadeText");
+        let fadeTimeout;
+
+        fadeButton.onclick = function() {
+            let opacity = 1;
+            
+            function fade() {
+                if (opacity > 0) {
+                    opacity -= 0.1;
+                    text.style.opacity = opacity;
+                    fadeTimeout = setTimeout(fade, 100);
+                }
+            }
+            
+            fade();
+        };
+
+        resetButton.onclick = function() {
+            clearTimeout(fadeTimeout);
+            text.style.opacity = 1;
+        };
+    </script>
+</body>
+</html>
