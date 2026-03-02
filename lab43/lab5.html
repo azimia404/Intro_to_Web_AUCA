@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lab 5: Blinking Text</title>
+    <style>
+        #blinkText {
+            font-size: 24px;
+            font-weight: bold;
+            padding: 20px;
+            text-align: center;
+            transition: color 0.3s ease;
+        }
+        
+        .controls {
+            margin: 20px;
+            text-align: center;
+        }
+        
+        button {
+            padding: 10px 20px;
+            margin: 0 10px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <p id="blinkText">This text will blink.</p>
+    <div class="controls">
+        <button id="startBlink">Start Blinking</button>
+        <button id="stopBlink">Stop Blinking</button>
+    </div>
+
+    <script>
+        let text = document.getElementById("blinkText");
+        let startButton = document.getElementById("startBlink");
+        let stopButton = document.getElementById("stopBlink");
+        let blinkInterval;
+
+        startButton.onclick = function() {
+            if (blinkInterval) {
+                clearInterval(blinkInterval);
+            }
+            
+            blinkInterval = setInterval(() => {
+                if (text.style.color === "red" || text.style.color === "") {
+                    text.style.color = "blue";
+                } else {
+                    text.style.color = "red";
+                }
+            }, 500);
+        };
+
+        stopButton.onclick = function() {
+            clearInterval(blinkInterval);
+            text.style.color = "black";
+        };
+    </script>
+</body>
+</html>
