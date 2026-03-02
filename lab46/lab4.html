@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 4: Dynamic Gallery</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+        .gallery img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .gallery img:hover {
+            transform: scale(1.05);
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.9);
+        }
+        .modal-content {
+            margin: auto;
+            display: block;
+            max-width: 80%;
+            max-height: 80%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 2;
+        }
+        .nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 40px;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            padding: 16px;
+            background-color: rgba(0,0,0,0.3);
+            border: none;
+            z-index: 2;
+        }
+        .nav-btn:hover {
+            background-color: rgba(0,0,0,0.8);
+        }
+        .prev {
+            left: 0;
+        }
+        .next {
+            right: 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Dynamic Gallery</h1>
+    <div class="gallery" id="gallery"></div>
+
+    <div id="myModal" class="modal">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <button class="nav-btn prev" onclick="changeImage(-1)">&#10094;</button>
+        <button class="nav-btn next" onclick="changeImage(1)">&#10095;</button>
+        <img class="modal-content" id="modalImage">
+    </div>
+
+    <script>
+        let imageArray = [
+            { url: "https://picsum.photos/id/1015/800/600", thumb: "https://picsum.photos/id/1015/300/300", alt: "Mountain" },
+            { url: "https://picsum.photos/id/1018/800/600", thumb: "https://picsum.photos/id/1018/300/300", alt: "Valley" },
+            { url: "https://picsum.photos/id/1043/800/600", thumb: "https://picsum.photos/id/1043/300/300", alt: "River" },
+            { url: "https://picsum.photos/id/1/800/600", thumb: "https://picsum.photos/id/1/300/300", alt: "Computer" },
+            { url: "https://picsum.photos/id/100/800/600", thumb: "https://picsum.photos/id/100/300/300", alt: "Camera" },
+            { url: "https://picsum.photos/id/101/800/600", thumb: "https://picsum.photos/id/101/300/300", alt: "City" }
+        ];
+
+        let gallery = document.getElementById("gallery");
+        let modal = document.getElementById("myModal");
+        let modalImg = document.getElementById("modalImage");
+        let images = [];
+        let currentIndex = 0;
+
+        imageArray.forEach((imgData, index) => {
+            let img = document.createElement("img");
+            img.src = imgData.thumb;
+            img.alt = imgData.alt;
+            img.dataset.fullsize = imgData.url;
+            
+            img.onclick = function() {
+                openModal(index);
+            };
+            
+            gallery.appendChild(img);
+            images.push(img);
+        });
+
+        function openModal(index) {
+            currentIndex = index;
+            modal.style.display = "block";
+            modalImg.src = images[currentIndex].dataset.fullsize;
+        }
+
+        function closeModal() {
+            modal.style.display = "none";
+        }
+
+        function changeImage(direction) {
+            currentIndex += direction;
+            if (currentIndex < 0) {
+                currentIndex = images.length - 1;
+            } else if (currentIndex >= images.length) {
+                currentIndex = 0;
+            }
+            modalImg.src = images[currentIndex].dataset.fullsize;
+        }
+    </script>
+</body>
+</html>

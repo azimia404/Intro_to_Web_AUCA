@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 5: Animated Gallery with LocalStorage</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+        .gallery img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .gallery img:hover {
+            transform: scale(1.05) rotate(1deg);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0);
+            transition: background-color 0.3s ease;
+        }
+        .modal.show {
+            background-color: rgba(0,0,0,0.95);
+        }
+        .modal-content {
+            margin: auto;
+            display: block;
+            max-width: 80%;
+            max-height: 80%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .modal.show .modal-content {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 2;
+            opacity: 0.7;
+            transition: opacity 0.2s ease;
+        }
+        .close:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+        .nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 40px;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            padding: 16px;
+            background-color: rgba(0,0,0,0.3);
+            border: none;
+            z-index: 2;
+            opacity: 0.7;
+            transition: all 0.2s ease;
+        }
+        .nav-btn:hover {
+            opacity: 1;
+            background-color: rgba(0,0,0,0.8);
+            transform: translateY(-50%) scale(1.1);
+        }
+        .prev {
+            left: 20px;
+        }
+        .next {
+            right: 20px;
+        }
+        .image-counter {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 16px;
+            background: rgba(0,0,0,0.5);
+            padding: 5px 15px;
+            border-radius: 20px;
+            z-index: 2;
+        }
+        .reset-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+        .reset-btn:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Animated Gallery with LocalStorage</h1>
+    <div class="gallery" id="gallery"></div>
+    <button class="reset-btn" onclick="clearLocalStorage()">Clear Last Viewed</button>
+
+    <div id="myModal" class="modal">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <button class="nav-btn prev" onclick="changeImage(-1)">&#10094;</button>
+        <button class="nav-btn next" onclick="changeImage(1)">&#10095;</button>
+        <img class="modal-content" id="modalImage">
+        <div class="image-counter" id="imageCounter"></div>
+    </div>
+
+    <script>
+        let imageArray = [
+            { url: "https://picsum.photos/id/1015/800/600", thumb: "https://picsum.photos/id/1015/300/300", alt: "Mountain" },
+            { url: "https://picsum.photos/id/1018/800/600", thumb: "https://picsum.photos/id/1018/300/300", alt: "Valley" },
+            { url: "https://picsum.photos/id/1043/800/600", thumb: "https://picsum.photos/id/1043/300/300", alt: "River" },
+            { url: "https://picsum.photos/id/1/800/600", thumb: "https://picsum.photos/id/1/300/300", alt: "Computer" },
+            { url: "https://picsum.photos/id/100/800/600", thumb: "https://picsum.photos/id/100/300/300", alt: "Camera" },
+            { url: "https://picsum.photos/id/101/800/600", thumb: "https://picsum.photos/id/101/300/300", alt: "City" },
+            { url: "https://picsum.photos/id/102/800/600", thumb: "https://picsum.photos/id/102/300/300", alt: "Nature" },
+            { url: "https://picsum.photos/id/103/800/600", thumb: "https://picsum.photos/id/103/300/300", alt: "Lake" }
+        ];
+
+        let gallery = document.getElementById("gallery");
+        let modal = document.getElementById("myModal");
+        let modalImg = document.getElementById("modalImage");
+        let imageCounter = document.getElementById("imageCounter");
+        let images = [];
+        let currentIndex = 0;
+
+        imageArray.forEach((imgData, index) => {
+            let img = document.createElement("img");
+            img.src = imgData.thumb;
+            img.alt = imgData.alt;
+            img.dataset.fullsize = imgData.url;
+            
+            img.onclick = function() {
+                openModal(index);
+            };
+            
+            gallery.appendChild(img);
+            images.push(img);
+        });
+
+        function openModal(index) {
+            currentIndex = index;
+            modal.style.display = "block";
+            
+            setTimeout(() => {
+                modal.classList.add("show");
+            }, 10);
+            
+            updateModalImage();
+            localStorage.setItem("lastViewedImage", index);
+        }
+
+        function closeModal() {
+            modal.classList.remove("show");
+            setTimeout(() => {
+                modal.style.display = "none";
+            }, 300);
+        }
+
+        function updateModalImage() {
+            modalImg.src = images[currentIndex].dataset.fullsize;
+            imageCounter.textContent = `${currentIndex + 1} / ${images.length}`;
+        }
+
+        function changeImage(direction) {
+            modalImg.style.opacity = "0";
+            modalImg.style.transform = "translate(-50%, -50%) scale(0.8)";
+            
+            setTimeout(() => {
+                currentIndex += direction;
+                if (currentIndex < 0) {
+                    currentIndex = images.length - 1;
+                } else if (currentIndex >= images.length) {
+                    currentIndex = 0;
+                }
+                
+                modalImg.src = images[currentIndex].dataset.fullsize;
+                imageCounter.textContent = `${currentIndex + 1} / ${images.length}`;
+                localStorage.setItem("lastViewedImage", currentIndex);
+                
+                setTimeout(() => {
+                    modalImg.style.opacity = "1";
+                    modalImg.style.transform = "translate(-50%, -50%) scale(1)";
+                }, 50);
+            }, 150);
+        }
+
+        window.onclick = function(event) {
+            if (event.target === modal) {
+                closeModal();
+            }
+        };
+
+        document.addEventListener("keydown", function(e) {
+            if (modal.style.display === "block") {
+                if (e.key === "ArrowLeft") {
+                    changeImage(-1);
+                } else if (e.key === "ArrowRight") {
+                    changeImage(1);
+                } else if (e.key === "Escape") {
+                    closeModal();
+                }
+            }
+        });
+
+        let lastViewed = localStorage.getItem("lastViewedImage");
+        if (lastViewed !== null) {
+            setTimeout(() => {
+                openModal(parseInt(lastViewed));
+            }, 500);
+        }
+
+        function clearLocalStorage() {
+            localStorage.removeItem("lastViewedImage");
+            alert("Last viewed image cleared!");
+        }
+    </script>
+</body>
+</html>
